@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JM Website</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='28' fill='%231c1917'/%3E%3Ctext x='50' y='72' font-size='82' font-weight='600' font-style='italic' font-family='Georgia, Times New Roman, serif' fill='%23ffffff' text-anchor='middle'%3Ef%3C/text%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <style>
+        :root {
+            --bg: #fafaf9;
+            --text: #1c1917;
+            --muted: #78716c;
+            --light: #d6d3d1;
+            --accent: #2563eb;
+            --border: #e7e5e4;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 5rem 2.5rem;
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 4.5rem;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            position: sticky;
+            top: 5rem;
+            height: fit-content;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1.25rem;
+            display: block;
+            transform-origin: top left;
+            transition: transform 0.4s ease;
+        }
+
+        .avatar.expanded {
+            transform: scale(3);
+        }
+
+        .si-item {
+            transition: opacity 0.4s ease;
+        }
+
+        .si-item.hidden {
+            opacity: 0;
+        }
+
+        .si-item.fast-in {
+            transition: opacity 0.15s ease;
+        }
+
+        .sidebar h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.15rem;
+        }
+
+        .sidebar .subtitle {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 1.25rem;
+        }
+
+        .sidebar .bio {
+            font-size: 0.82rem;
+            color: var(--text);
+            font-weight: 350;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .nav-item {
+            font-size: 0.88rem;
+            font-weight: 450;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 0.15rem 0;
+            transition: color 0.15s;
+            border: none;
+            background: none;
+            text-align: left;
+            font-family: var(--font);
+        }
+
+        .nav-item:hover { color: var(--accent); }
+        .nav-item.active { color: var(--text); font-weight: 500; }
+
+        /* --- CONTENT --- */
+        .content {
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content-section.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* About section */
+        .about-layout p {
+            font-size: 0.95rem;
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 580px;
+            /* text-align: justify; */
+        }
+
+        .about-layout p + p {
+            margin-top: 1rem;
+        }
+
+        .about-layout strong {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .about-contact {
+            margin-top: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .contact-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+
+        .contact-email {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.88rem;
+        }
+
+        .contact-email a {
+            color: var(--text);
+            transition: color 0.15s;
+        }
+
+        .contact-email a:hover {
+            color: rgba(0,0,0,0.45);
+        }
+
+        .copy-toast {
+            font-size: 0.7rem;
+            color: var(--muted);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            pointer-events: none;
+            position: relative;
+            top: 0.5px;
+            margin-left: 0.6rem;
+        }
+
+        .copy-toast.show {
+            opacity: 1;
+        }
+
+        /* Notes section */
+        .entry {
+            padding: 1.5rem 0 1.5rem 1rem;
+            border-left: 1px solid var(--border);
+            box-shadow: -5px 0 10px -5px rgba(0,0,0,0.07);
+        }
+
+        .entry:first-of-type {
+            padding-top: 0;
+        }
+
+        .entry:last-of-type {
+            border-left: 1px solid var(--border);
+        }
+
+        .entry-meta {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .entry-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 0.7rem;
+        }
+
+        .entry-title a {
+            color: var(--text);
+            transition: color 0.15s;
+        }
+
+        .entry-title a:hover {
+            color: var(--accent);
+        }
+
+        .entry-desc {
+            font-size: 0.82rem;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* WIP section */
+        .content-section#sec-wip.active {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .wip-hero {
+            font-size: 1.35rem;
+            font-weight: 380;
+            color: var(--text);
+            max-width: 520px;
+            line-height: 1.7;
+            text-align: right;
+        }
+
+        .wip-cta {
+            font-size: 0.88rem;
+            color: var(--text);
+            max-width: 520px;
+            line-height: 1.8;
+            text-align: right;
+            margin-top: 2rem;
+        }
+
+        .wip-cta a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .wip-cta a:hover {
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .wip-cta .small {
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+
+        /* Init / Math animation */
+        .content-section#sec-init.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #mathCanvas {
+            width: 100%;
+            height: 75vh;
+            min-height: 500px;
+            display: block;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 720px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+                padding: 2.5rem 1.5rem;
+            }
+
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+
+            .nav-menu {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .avatar.expanded {
+                transform: scale(2);
+            }
+
+            #mathCanvas {
+                height: 50vh;
+                min-height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <aside class="sidebar">
+        <img src="pics/orla.jpg" alt="Profile" class="avatar" id="profilePic">
+        <div class="sidebar-info" id="sidebarInfo">
+            <h1 class="si-item" id="siName">Juan M. Guerrero</h1>
+            <p class="subtitle si-item" id="siSubtitle">BSc in Physics</p>
+            <p class="bio si-item" id="siBio">
+                Interested in the interplay between statistical physics and complex systems. Passionate about decoding complexity through probabilistic reasoning and mathematical modeling.
+            </p>
+        </div>
+        <nav class="nav-menu" id="navMenu">
+            <button class="nav-item" data-section="about">About</button>
+            <button class="nav-item" data-section="notes">Notes &amp; Research</button>
+            <button class="nav-item" data-section="wip">Work in Progress</button>
+        </nav>
+    </aside>
+
+    <main class="content" id="contentArea">
+
+        <!-- Init / Mathematical animation -->
+        <div class="content-section" id="sec-init">
+            <canvas id="mathCanvas"></canvas>
+        </div>
+
+        <!-- About -->
+        <div class="content-section" id="sec-about">
+            <div class="about-layout">
+                <div>
+                    <p>
+                        I am a Physics graduate from the University of Granada, guided by an analytical approach that values both <strong>mathematical rigor</strong> and a <strong>healthy skepticism</strong>. Throughout my academic journey, I have been particularly fascinated by how simple principles can give rise to complex and collective behaviors, guided by the belief that <strong>meaningful understanding</strong> requires time, patience, and a careful exploration of the underlying logic and structure of a phenomenon.
+                    </p>
+                    <p>
+                        My academic focus centers on mapping the foundations where probabilistic models and physical frameworks meet. I enjoy approaching scientific problems by meticulously tracing the <strong>logical path</strong> behind them, seeking not only to obtain results, but also to thoroughly understand the principles that make them possible. Beyond research, I value clear communication, precise documentation, and the ability to convey scientific concepts in an <strong>intuitive way</strong>.
+                    </p>
+                    <div class="about-contact">
+                        <span class="contact-label">Contact</span>
+                        <span class="contact-email">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                            <a href="mailto:juanmiguelgch@correo.ugr.es" id="emailLink">juanmiguelgch@correo.ugr.es</a>
+                            <span class="copy-toast" id="copyToast">copied</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes & Research -->
+        <div class="content-section" id="sec-notes">
+            <div class="entry">
+                <div class="entry-meta">2026 • Bachelor's Thesis</div>
+                <h2 class="entry-title"><a href="docs/tfg.pdf" target="_blank">Foundations at the intersection of Machine Learning and Statistical Physics</a></h2>
+                <p class="entry-desc">
+                    Comprehensive interpretation of energy-based Machine Learning models through the lens of statistical physics and spin-glass systems. By leveraging Shannon's information theory and free energy minimization, the study rigorously details the transition from Hopfield networks to Restricted Boltzmann Machines. The framework demonstrates how bipartite architectures encode complex probability distributions, providing a deep thermodynamic understanding of Boltzmann learning. The full document is available in PDF format (in Spanish).
+                </p>
+            </div>
+            <div class="entry">
+                <div class="entry-meta">2026 • Research-Oriented Project</div>
+                <h2 class="entry-title"><a href="docs/comm-det.pdf" target="_blank">Community Detection in Networks via Simulated Annealing</a></h2>
+                <p class="entry-desc">
+                    Stochastic approach based on simulated annealing for uncovering the modular organization of complex networks without predefining the number of groups. The method exhibits high robustness in regimes where communities are difficult to discern and overcomes the classical resolution limit through generalized modularity. Its accuracy is validated on Zachary's karate club and the human connectome. Coauthored with Adriana Navarrete Campillo. The full document is available in PDF format (in Spanish).
+                </p>
+            </div>
+        </div>
+
+        <!-- Work in Progress -->
+        <div class="content-section" id="sec-wip">
+            <p class="wip-hero">
+                This website is a living project,<br>
+                much like my understanding of physics.<br>
+                <br>
+                I am still building this corner of the<br>
+                internet — more content, lecture notes,<br>
+                and technical documents will appear here<br>
+                over time.
+            </p>
+            <p class="wip-cta">
+                <span class="small">In the meantime, you can explore my work on <a href="https://github.com/ItsQuark" target="_blank">GitHub</a></span>
+            </p>
+        </div>
+
+    </main>
+</div>
+
+<script>
+    const navItems = document.querySelectorAll('.nav-item');
+    const sections = {
+        about: document.getElementById('sec-about'),
+        notes: document.getElementById('sec-notes'),
+        wip: document.getElementById('sec-wip'),
+        init: document.getElementById('sec-init'),
+    };
+    const profilePic = document.getElementById('profilePic');
+    const siItems = [
+        document.getElementById('siName'),
+        document.getElementById('siSubtitle'),
+        document.getElementById('siBio'),
+    ];
+
+    let currentSection = null; // null = menu-init
+    let leaveTimeout = null;
+    let sideNavId = 0;
+
+    document.getElementById('emailLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        navigator.clipboard.writeText('juanmiguelgch@correo.ugr.es');
+        const toast = document.getElementById('copyToast');
+        toast.classList.add('show');
+        clearTimeout(toast._hide);
+        toast._hide = setTimeout(() => toast.classList.remove('show'), 650);
+    });
+
+    function switchContent(key) {
+        Object.entries(sections).forEach(([k, el]) => {
+            el.classList.toggle('active', k === key);
+        });
+        if (key === 'init') startAnimation();
+        else stopAnimation();
+    }
+
+    // ── Canvas animation (elegant bifurcation tree) ──
+    const canvas = document.getElementById('mathCanvas');
+    const ctx = canvas.getContext('2d');
+    let animId = null;
+
+    const INITIAL_DELAY = 800;
+    const DURATION = 9000;
+    const TRANSITION_MS = 4000;
+    const NUM_SAMPLES = 1200;
+    const MAX_X = 0.975;
+    let animStartTime = null;
+    let offCanvas = null;
+    let offCtx = null;
+    let treeCanvas = null;
+    let treeCtx = null;
+    let treeRendered = false;
+
+    const bps = [0.18, 0.28, 0.39, 0.51, 0.66, 0.95];
+    const NUM_LEVELS = bps.length;
+
+    const levelY = (() => {
+        const levels = [];
+        for (let k = 0; k <= NUM_LEVELS; k++) {
+            const n = 1 << k, ys = [];
+            for (let i = 0; i < n; i++) ys[i] = (i + 0.5) / n;
+            levels.push(ys);
+        }
+        return levels;
+    })();
+
+    const numFinal = 1 << NUM_LEVELS;
+    const branchSegs = [];
+    for (let i = 0; i < numFinal; i++) {
+        const segs = [];
+        for (let k = 0; k < NUM_LEVELS; k++) {
+            const x0 = k === 0 ? 0 : bps[k - 1];
+            const x1 = bps[k];
+            const pIdx = i >> (NUM_LEVELS - k);
+            const cIdx = i >> (NUM_LEVELS - k - 1);
+            segs.push({ x0, y0: levelY[k][pIdx], x1, y1: levelY[k + 1][cIdx] });
+        }
+        segs.push({ x0: bps[NUM_LEVELS - 1], y0: levelY[NUM_LEVELS][i], x1: MAX_X, y1: levelY[NUM_LEVELS][i] });
+        branchSegs.push(segs);
+    }
+
+    function evalBranch(segs, x) {
+        for (const s of segs) {
+            if (x >= s.x0 && x < s.x1) {
+                const t = (x - s.x0) / (s.x1 - s.x0);
+                const st = t * t * (3 - 2 * t);
+                return s.y0 + (s.y1 - s.y0) * st;
+            }
+        }
+        return segs[segs.length - 1].y1;
+    }
+
+    const branchData = branchSegs.map(segs => {
+        const ys = new Float32Array(NUM_SAMPLES);
+        for (let i = 0; i < NUM_SAMPLES; i++) ys[i] = evalBranch(segs, i / NUM_SAMPLES);
+        return ys;
+    });
+
+    function easeInOutCubic(t) {
+        return -(Math.cos(Math.PI * t) - 1) / 2;
+    }
+
+    function drawBranches(ctx, count, w, h) {
+        ctx.lineCap = 'butt';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 0.5;
+        for (let b = 0; b < branchData.length; b++) {
+            const ys = branchData[b];
+            ctx.beginPath();
+            for (let i = 0; i <= count; i++) {
+                const xp = (i / NUM_SAMPLES) * w;
+                const yp = (1 - ys[i]) * h;
+                if (i === 0) ctx.moveTo(xp, yp);
+                else ctx.lineTo(xp, yp);
+            }
+            ctx.stroke();
+        }
+    }
+
+    function startAnimation() {
+        if (animId) { cancelAnimationFrame(animId); animId = null; }
+        animStartTime = null;
+        canvas._lastCount = -1;
+        offCanvas = null;
+        offCtx = null;
+        treeCanvas = null;
+        treeCtx = null;
+        treeRendered = false;
+
+        const dpr = window.devicePixelRatio || 1;
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight || 600;
+        if (w > 0) {
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            canvas._lw = w;
+            canvas._lh = h;
+            canvas._ldpr = dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, w, h);
+        }
+
+        function frame(time) {
+            if (!sections.init.classList.contains('active')) { animId = null; return; }
+
+            const dpr = window.devicePixelRatio || 1;
+            const w = canvas.clientWidth;
+            const h = canvas.clientHeight || 600;
+            if (w === 0) { animId = requestAnimationFrame(frame); return; }
+
+            if (canvas._lw !== w || canvas._lh !== h || canvas._ldpr !== dpr) {
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                canvas._lw = w;
+                canvas._lh = h;
+                canvas._ldpr = dpr;
+                canvas._needsRedraw = true;
+            }
+
+            if (!animStartTime) animStartTime = time + INITIAL_DELAY;
+            const elapsed = time - animStartTime;
+            const rawProgress = Math.max(Math.min(elapsed / DURATION, 1), 0);
+            const progress = easeInOutCubic(rawProgress);
+            const maxCount = Math.floor(MAX_X * NUM_SAMPLES);
+            const count = Math.min(Math.floor(progress * NUM_SAMPLES), maxCount);
+            const isFullyGrown = elapsed >= DURATION;
+
+            if (!canvas._needsRedraw && count === canvas._lastCount && !isFullyGrown) {
+                animId = requestAnimationFrame(frame);
+                return;
+            }
+            canvas._lastCount = count;
+            canvas._needsRedraw = false;
+
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, w, h);
+
+            if (!isFullyGrown) {
+                ctx.strokeStyle = '#000000';
+                drawBranches(ctx, count, w, h);
+            } else {
+                const transition = Math.min((elapsed - DURATION) / TRANSITION_MS, 1);
+
+                if (!treeRendered || treeCanvas.width !== canvas.width || treeCanvas.height !== canvas.height) {
+                    if (!treeCanvas) { treeCanvas = document.createElement('canvas'); treeCtx = treeCanvas.getContext('2d'); }
+                    treeCanvas.width = canvas.width;
+                    treeCanvas.height = canvas.height;
+                    treeCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                    treeCtx.clearRect(0, 0, w, h);
+                    treeCtx.strokeStyle = '#ffffff';
+                    drawBranches(treeCtx, maxCount, w, h);
+                    treeRendered = true;
+                }
+
+                // 1. Draw black tree on main canvas
+                ctx.strokeStyle = '#000000';
+                drawBranches(ctx, maxCount, w, h);
+
+                // 2. Remove black tree from swept area (avoid double-draw)
+                const edge = Math.min(transition / 0.85, 1);
+                const soft = 0.12;
+                const removeGrad = ctx.createLinearGradient(w, h, 0, 0);
+                removeGrad.addColorStop(0, 'rgba(0,0,0,1)');
+                removeGrad.addColorStop(Math.max(edge - soft, 0), 'rgba(0,0,0,1)');
+                removeGrad.addColorStop(Math.min(edge, 1), 'rgba(0,0,0,0)');
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.fillStyle = removeGrad;
+                ctx.fillRect(0, 0, w, h);
+                ctx.globalCompositeOperation = 'source-over';
+
+                // 3. Build gradient tree on offCanvas — horizontal left-to-right river
+                const t = time * 0.0005;
+                const grad = ctx.createLinearGradient(0, 0, w, 0);
+                grad.addColorStop(0, `hsl(${330 + 60 * Math.sin(t * 0.6)}, 60%, 72%)`);
+                grad.addColorStop(0.5, `hsl(${100 + 60 * Math.sin(t * 0.5 + 1.2)}, 62%, 72%)`);
+                grad.addColorStop(1, `hsl(${172 + 60 * Math.sin(t * 0.5 + 2.5)}, 70%, 59%)`);
+
+                if (!offCanvas) { offCanvas = document.createElement('canvas'); offCtx = offCanvas.getContext('2d'); }
+                offCanvas.width = canvas.width;
+                offCanvas.height = canvas.height;
+                offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                offCtx.clearRect(0, 0, w, h);
+
+                offCtx.fillStyle = grad;
+                offCtx.fillRect(0, 0, w, h);
+
+                offCtx.globalCompositeOperation = 'destination-in';
+                offCtx.drawImage(treeCanvas, 0, 0, w, h);
+                offCtx.globalCompositeOperation = 'source-over';
+
+                if (transition < 1) {
+                    const sweepGrad = offCtx.createLinearGradient(w, h, 0, 0);
+                    sweepGrad.addColorStop(0, 'rgba(255,255,255,1)');
+                    sweepGrad.addColorStop(Math.max(edge - soft, 0), 'rgba(255,255,255,1)');
+                    sweepGrad.addColorStop(Math.min(edge, 1), 'rgba(255,255,255,0)');
+                    offCtx.globalCompositeOperation = 'destination-in';
+                    offCtx.fillStyle = sweepGrad;
+                    offCtx.fillRect(0, 0, w, h);
+                    offCtx.globalCompositeOperation = 'source-over';
+                }
+
+                ctx.save();
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.drawImage(offCanvas, 0, 0);
+                ctx.restore();
+            }
+
+            animId = requestAnimationFrame(frame);
+        }
+
+        animId = requestAnimationFrame(frame);
+    }
+
+    function stopAnimation() {
+        if (animId) { cancelAnimationFrame(animId); animId = null; }
+    }
+
+    // ── Navigation ──
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const section = item.dataset.section;
+
+            if (currentSection === section) {
+                // Toggle off → menu-init
+                currentSection = null;
+                navItems.forEach(n => n.classList.remove('active'));
+
+                if (leaveTimeout) {
+                    clearTimeout(leaveTimeout);
+                    leaveTimeout = null;
+                }
+                ++sideNavId;
+                siItems.forEach(el => el.classList.remove('fast-in'));
+
+                if (section === 'about') {
+                    profilePic.classList.remove('expanded');
+                    const thisId = sideNavId;
+                    leaveTimeout = setTimeout(() => {
+                        siItems.forEach((el, i) => {
+                            setTimeout(() => {
+                                if (sideNavId !== thisId) return;
+                                el.classList.add('fast-in');
+                                el.classList.remove('hidden');
+                            }, i * 60);
+                        });
+                        setTimeout(() => {
+                            if (sideNavId !== thisId) return;
+                            siItems.forEach(el => el.classList.remove('fast-in'));
+                        }, siItems.length * 60 + 200);
+                        leaveTimeout = null;
+                    }, 350);
+                } else {
+                    siItems.forEach(el => el.classList.remove('hidden'));
+                }
+
+                switchContent('init');
+                return;
+            }
+
+            // Switch to a different section
+            currentSection = section;
+            navItems.forEach(n => n.classList.remove('active'));
+            item.classList.add('active');
+
+            if (leaveTimeout) {
+                clearTimeout(leaveTimeout);
+                leaveTimeout = null;
+            }
+            ++sideNavId;
+            siItems.forEach(el => el.classList.remove('fast-in'));
+
+            if (section === 'about') {
+                profilePic.classList.add('expanded');
+                siItems.forEach(el => el.classList.add('hidden'));
+            } else if (profilePic.classList.contains('expanded')) {
+                profilePic.classList.remove('expanded');
+                const thisId = sideNavId;
+                leaveTimeout = setTimeout(() => {
+                    siItems.forEach((el, i) => {
+                        setTimeout(() => {
+                            if (sideNavId !== thisId) return;
+                            el.classList.add('fast-in');
+                            el.classList.remove('hidden');
+                        }, i * 60);
+                    });
+                    setTimeout(() => {
+                        if (sideNavId !== thisId) return;
+                        siItems.forEach(el => el.classList.remove('fast-in'));
+                    }, siItems.length * 60 + 200);
+                    leaveTimeout = null;
+                }, 350);
+            } else {
+                siItems.forEach(el => el.classList.remove('hidden'));
+            }
+
+            switchContent(section);
+        });
+    });
+
+    // Start in menu-init state
+    switchContent('init');
+</script>
+
+</body>
+</html>
