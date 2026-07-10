@@ -204,16 +204,33 @@
         /* Notes section */
         .entry {
             padding: 1.5rem 0 1.5rem 1rem;
-            border-left: 1px solid var(--border);
-            box-shadow: -5px 0 10px -5px rgba(0,0,0,0.07);
+            border-left: 1px solid rgba(231,229,228,0.5);
+            position: relative;
+        }
+
+        .entry-link {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .entry-link:hover .entry-title {
+            color: var(--accent);
+        }
+
+        .entry::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -10px;
+            width: 10px;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(0,0,0,0.035));
+            pointer-events: none;
         }
 
         .entry:first-of-type {
             padding-top: 0;
-        }
-
-        .entry:last-of-type {
-            border-left: 1px solid var(--border);
         }
 
         .entry-meta {
@@ -229,15 +246,8 @@
             font-weight: 600;
             line-height: 1.4;
             margin-bottom: 0.7rem;
-        }
-
-        .entry-title a {
             color: var(--text);
             transition: color 0.15s;
-        }
-
-        .entry-title a:hover {
-            color: var(--accent);
         }
 
         .entry-desc {
@@ -383,18 +393,22 @@
         <!-- Notes & Research -->
         <div class="content-section" id="sec-notes">
             <div class="entry">
-                <div class="entry-meta">2026 • Bachelor's Thesis</div>
-                <h2 class="entry-title"><a href="docs/tfg.pdf" target="_blank">Foundations at the intersection of Machine Learning and Statistical Physics</a></h2>
-                <p class="entry-desc">
-                    Comprehensive interpretation of energy-based Machine Learning models through the lens of statistical physics and spin-glass systems. By leveraging Shannon's information theory and free energy minimization, the study rigorously details the transition from Hopfield networks to Restricted Boltzmann Machines. The framework demonstrates how bipartite architectures encode complex probability distributions, providing a deep thermodynamic understanding of Boltzmann learning. The full document is available in PDF format (in Spanish).
-                </p>
+                <a href="docs/tfg.pdf" target="_blank" class="entry-link">
+                    <div class="entry-meta">2026 • Bachelor's Thesis</div>
+                    <h2 class="entry-title">Foundations at the intersection of Machine Learning and Statistical Physics</h2>
+                    <p class="entry-desc">
+                        Comprehensive interpretation of energy-based Machine Learning models through the lens of statistical physics and spin-glass systems. By leveraging Shannon's information theory and free energy minimization, the study rigorously details the transition from Hopfield networks to Restricted Boltzmann Machines. The framework demonstrates how bipartite architectures encode complex probability distributions, providing a deep thermodynamic understanding of Boltzmann learning. The full document is available in PDF format (in Spanish).
+                    </p>
+                </a>
             </div>
             <div class="entry">
-                <div class="entry-meta">2026 • Research-Oriented Project</div>
-                <h2 class="entry-title"><a href="docs/comm-det.pdf" target="_blank">Community Detection in Networks via Simulated Annealing</a></h2>
-                <p class="entry-desc">
-                    Stochastic approach based on simulated annealing for uncovering the modular organization of complex networks without predefining the number of groups. The method exhibits high robustness in regimes where communities are difficult to discern and overcomes the classical resolution limit through generalized modularity. Its accuracy is validated on Zachary's karate club and the human connectome. Coauthored with Adriana Navarrete Campillo. The full document is available in PDF format (in Spanish).
-                </p>
+                <a href="docs/comm-det.pdf" target="_blank" class="entry-link">
+                    <div class="entry-meta">2026 • Research-Oriented Project</div>
+                    <h2 class="entry-title">Community Detection in Networks via Simulated Annealing</h2>
+                    <p class="entry-desc">
+                        Stochastic approach based on simulated annealing for uncovering the modular organization of complex networks without predefining the number of groups. The method exhibits high robustness in regimes where communities are difficult to discern and overcomes the classical resolution limit through generalized modularity. Its accuracy is validated on Zachary's karate club and the human connectome. Coauthored with Adriana Navarrete Campillo. The full document is available in PDF format (in Spanish).
+                    </p>
+                </a>
             </div>
         </div>
 
